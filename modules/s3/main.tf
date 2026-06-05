@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "results" {
-  bucket = "${var.project}-${var.environment}-results-${data.aws_caller_identity.current.account_id}"
+  bucket        = "${var.project}-${var.environment}-results-${data.aws_caller_identity.current.account_id}"
+  force_destroy = true
 
   tags = {
     Name        = "${var.project}-${var.environment}-results"

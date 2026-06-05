@@ -65,7 +65,7 @@ Flujo de datos:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <url-repositorio>
+git clone https://github.com/Jean0124/sre-aws-infra.git
 cd sre-aws-infra
 ```
 

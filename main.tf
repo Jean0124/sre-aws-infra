@@ -50,6 +50,26 @@ module "lambda" {
   s3_bucket_arn       = module.s3.bucket_arn
 }
 
+# ─── BUCKET POLICY: solo el rol IAM de Lambda puede acceder al bucket ──────────
+resource "aws_s3_bucket_policy" "results" {
+  bucket = module.s3.bucket_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Deny"
+      Principal = "*"
+      Action    = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
+      Resource  = "${module.s3.bucket_arn}/*"
+      Condition = {
+        StringNotEquals = {
+          "aws:PrincipalArn" = module.lambda.role_arn
+        }
+      }
+    }]
+  })
+}
+
 module "api_gateway" {
   source             = "./modules/api_gateway"
   project            = var.project

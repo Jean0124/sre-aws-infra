@@ -1,7 +1,9 @@
 variable "project" {
-  type = string
+  description = "Nombre del proyecto — se usa como prefijo en todos los recursos"
+  type        = string
 }
 
 variable "environment" {
-  type = string
+  description = "Entorno de despliegue (dev, staging, prod)"
+  type        = string
 }

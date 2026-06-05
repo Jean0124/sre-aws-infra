@@ -1,32 +1,40 @@
 variable "project" {
-  type = string
+  description = "Nombre del proyecto — se usa como prefijo en todos los recursos"
+  type        = string
 }
 
 variable "environment" {
-  type = string
+  description = "Entorno de despliegue (dev, staging, prod)"
+  type        = string
 }
 
 variable "subnet_ids" {
-  type = list(string)
+  description = "IDs de las subnets privadas donde se desplegara la funcion Lambda"
+  type        = list(string)
 }
 
 variable "security_group_id" {
-  type = string
+  description = "ID del Security Group de Lambda"
+  type        = string
 }
 
 variable "redis_host" {
-  type = string
+  description = "Endpoint del cluster ElastiCache Redis"
+  type        = string
 }
 
 variable "redis_port" {
-  type    = number
-  default = 6379
+  description = "Puerto de Redis"
+  type        = number
+  default     = 6379
 }
 
 variable "s3_bucket_name" {
-  type = string
+  description = "Nombre del bucket S3 donde se guardan los resultados"
+  type        = string
 }
 
 variable "s3_bucket_arn" {
-  type = string
+  description = "ARN del bucket S3 para la politica IAM de la funcion"
+  type        = string
 }
