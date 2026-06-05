@@ -17,8 +17,8 @@ Infraestructura como código para un servicio de procesamiento de datos serverle
  │ Gateway  │             │  │  (EIP)          │       │   (Python)   │              │  │
  │ HTTP API │             │  └─────────────────┘       │      │       │              │  │
  └──────────┘             │  ┌─────────────────┐       │      ▼       │              │  │
-      │                   │  │  us-east-1b      │       │   Redis      │   Redis      │  │
-      │  POST /process    │  │  10.0.1.0/24     │       │ (primary)    │  (replica)   │  │
+      │                   │  │  us-east-1b      │       │   Redis                      │  │
+      │  POST /process    │  │  10.0.1.0/24     │       │ (cache.t3.micro, 1 nodo)     │  │
       │                   │  │                 │       └──────────────────────────────┘  │
       │                   │  │  Internet GW ◄──┼────── tráfico de entrada               │
       │                   │  └─────────────────┘                                         │
@@ -194,6 +194,15 @@ Se usa un **Gateway Endpoint** (no Interface Endpoint) para S3 porque:
 - SG de Lambda: solo permite egress a Redis (6379) y HTTPS (443) para el SDK de AWS
 - SG de Redis: solo permite ingress desde el SG de Lambda, sin acceso público
 - No hay reglas ingress en Lambda ya que es invocada por API Gateway, no por red directa
+
+### Bucket Policy — doble capa de seguridad en S3
+
+Se implementaron dos controles de acceso independientes sobre el bucket:
+
+- **IAM Role Policy** (del lado del actor): le dice a Lambda qué acciones puede hacer en S3
+- **Bucket Policy** (del lado del recurso): deniega `GetObject`, `PutObject` y `DeleteObject` a cualquier principal que no sea el rol IAM de Lambda
+
+Esta doble capa garantiza que aunque otro recurso de la cuenta tuviera permisos IAM amplios, el bucket rechazaría sus peticiones. La policy se definió en `main.tf` en lugar del módulo S3 para evitar una dependencia circular (S3 necesita el ARN del rol Lambda, y Lambda necesita el ARN del bucket).
 
 ### Empaquetado de dependencias Lambda
 
